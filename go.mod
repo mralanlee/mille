@@ -1,6 +1,6 @@
 module github.com/mralanlee/mille
 
-go 1.18
+go 1.24.4
 
 require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
