@@ -8,8 +8,8 @@ from typing import Dict, List, Any, Optional
 from diagrams import Diagram
 from diagrams.aws.compute import EC2
 from diagrams.aws.database import RDS
-from diagrams.aws.network import VPC, Subnet
-from diagrams.azure.compute import VirtualMachines
+from diagrams.aws.network import VPC, PrivateSubnet
+from diagrams.azure.compute import VM
 from diagrams.azure.database import SQLDatabases
 from diagrams.gcp.compute import ComputeEngine
 from diagrams.gcp.database import SQL
@@ -101,11 +101,11 @@ class DiagramRenderer:
                 "aws_instance": EC2,
                 "aws_db_instance": RDS,
                 "aws_vpc": VPC,
-                "aws_subnet": Subnet,
+                "aws_subnet": PrivateSubnet,
             }
         elif self.provider == "azure":
             return {
-                "azurerm_virtual_machine": VirtualMachines,
+                "azurerm_virtual_machine": VM,
                 "azurerm_sql_database": SQLDatabases,
             }
         elif self.provider == "gcp":
