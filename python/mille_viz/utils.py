@@ -29,7 +29,9 @@ def parse_tf_plan(plan_file_path: str) -> Dict[str, Any]:
     except FileNotFoundError:
         raise FileNotFoundError(f"Terraform plan file not found: {plan_file_path}")
     except json.JSONDecodeError as e:
-        raise json.JSONDecodeError(f"Invalid JSON in plan file: {e}")
+        raise json.JSONDecodeError(
+            f"Invalid JSON in plan file: {e.msg}", e.doc, e.pos
+        )
 
 
 def get_supported_providers() -> List[str]:
