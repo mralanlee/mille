@@ -154,7 +154,7 @@ version = "0.1.0"
 description = "Terraform Plan Visualization Tools"
 readme = "README.md"
 requires-python = ">=3.9"
-license = {text = "MIT"}
+license = {text = "Apache-2.0"}
 dependencies = [
     "diagrams>=0.23.3",
     "pydantic>=1.9.0",
