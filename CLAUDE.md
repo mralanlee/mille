@@ -21,13 +21,12 @@ Mille uses a **dual-CLI approach** with two separate `mille` executables:
 ```
 mille/
 ├── cmd/
-│   ├── mille-go/       # Go CLI for parsing (binary: mille)
-│   └── mille-python/   # Python CLI for visualization (binary: mille)
+│   └── mille/          # Go CLI for parsing (binary: mille)
 ├── internal/           # Go internal packages
 │   ├── parser/         # TF plan parsing
 │   └── server/         # HTTP server (if needed)
 ├── python/             # Python visualization package
-│   └── mille_viz/      # Main Python package
+│   └── mille_viz/      # Main Python package (includes CLI)
 ├── scripts/
 │   └── entrypoint.sh   # Docker container routing script
 ├── web/                # Svelte web UI
@@ -46,7 +45,7 @@ mille/
 ## Development Commands
 
 ### Local Development
-- **Go CLI**: `cd cmd/mille-go && go build -o mille`
+- **Go CLI**: `cd cmd/mille && go build -o mille`
 - **Python CLI**: `cd python && pip install -e . && python -m mille_viz.cli --help`
 - **Web UI**: `cd web && npm install && npm run dev`
 
@@ -56,7 +55,7 @@ mille/
 - **Diagram Command**: `docker run mille diagram --input parsed.json --output diagram.svg`
 
 ### Testing
-- **Go Tests**: `cd cmd/mille-go && go test ./...`
+- **Go Tests**: `cd cmd/mille && go test ./...`
 - **Python Tests**: `cd python && python -m pytest`
 - **Integration**: `cd tests/integration && ./run_tests.sh`
 
