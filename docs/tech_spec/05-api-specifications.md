@@ -40,14 +40,74 @@ Response:
 
 ## 5.2 CLI Interface
 
+### Dual-CLI Usage
+
+#### Go CLI (Parsing)
 ```bash
-# Basic usage
-mille plan.json --output=diagram.svg
+# Parse Terraform plan to structured JSON
+mille --input plan.json --output parsed.json
 
-# Web server upload
-mille plan.json --server=http://visualization-server
+# Parse with YAML output format
+mille --input plan.json --format yaml --output plan.yaml
 
-# Start local preview server
-mille plan.json --serve
+# Parse with validation
+mille --input plan.json --output parsed.json --validate
+```
+
+#### Python CLI (Visualization)
+```bash
+# Generate diagram from parsed data
+mille --input parsed.json --output diagram.svg
+
+# Generate with specific format and theme
+mille --input parsed.json --format png --theme aws --output diagram.png
+
+# Generate interactive HTML
+mille --input parsed.json --format html --output interactive.html
+```
+
+### Container Interface (Unified)
+
+```bash
+# Two-step process via container
+docker run mille parse --input plan.json --output parsed.json
+docker run mille diagram --input parsed.json --output diagram.svg
+
+# Single command with chaining (future)
+docker run mille --input plan.json --output diagram.svg
+
+# CI/CD integration
+docker run -v $(pwd):/workspace mille parse --input /workspace/plan.json --output /workspace/parsed.json
+docker run -v $(pwd):/workspace mille diagram --input /workspace/parsed.json --output /workspace/diagram.svg
+```
+
+## 5.3 Inter-Service Data Format
+
+### Parsed Plan JSON Schema
+```json
+{
+  "version": "1.0",
+  "terraform_version": "1.5.2",
+  "resources": [
+    {
+      "address": "aws_instance.web",
+      "type": "aws_instance",
+      "provider": "aws",
+      "change": {
+        "action": "create",
+        "before": null,
+        "after": {
+          "instance_type": "t3.small",
+          "ami": "ami-12345678"
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "timestamp": "2025-06-10T03:47:00Z",
+    "parsed_by": "mille-go",
+    "version": "1.0.0"
+  }
+}
 ```
 

@@ -1,23 +1,35 @@
 # Mille Project Context
 
 ## Project Overview
-Mille is a Terraform/OpenTofu plan visualization tool that creates infrastructure diagrams from plan files.
+Mille is a Terraform/OpenTofu plan visualization tool that creates infrastructure diagrams from plan files using a microservices architecture with a unified CLI.
 
 ## Technology Stack
-- **Backend**: Go 1.18+ (CLI and API server)
-- **Visualization**: Python with `diagrams` library
-- **Web UI**: Svelte
+- **Main CLI**: Go 1.18+ (plan parsing and orchestration)
+- **Visualization Service**: Python with `diagrams` library (diagram generation)
+- **Web UI**: Svelte (interactive visualization)
+- **Containerization**: Docker with shell script entrypoint
 - **Dependencies**: Graphviz
+
+## Architecture Overview
+Mille uses a **microservices approach** with a primary `mille` CLI and internal services:
+- **Go CLI (`mille`)**: Main CLI handling Terraform plan parsing and orchestration
+- **Python Visualization Library**: Internal diagram generation and visualization
+- **Shell Script Router**: Docker entrypoint that routes commands to appropriate services
+- **Microservices Design**: Each component can scale independently
 
 ## Project Structure
 ```
 mille/
-├── cmd/mille/          # CLI entry point
+├── cmd/
+│   └── mille/          # Main Go CLI (binary: mille)
 ├── internal/           # Go internal packages
 │   ├── parser/         # TF plan parsing
-│   ├── render/         # Rendering logic
-│   └── server/         # HTTP server
-├── python/             # Python visualization
+│   ├── render/         # Rendering orchestration
+│   └── server/         # HTTP server (if needed)
+├── python/             # Python visualization package
+│   └── mille_viz/      # Visualization library with internal CLI
+├── scripts/
+│   └── entrypoint.sh   # Docker container routing script
 ├── web/                # Svelte web UI
 │   └── src/
 │       ├── components/
@@ -26,28 +38,55 @@ mille/
 ├── tests/              # Test files
 │   ├── unit/
 │   └── integration/
-├── scripts/            # Build and utility scripts
+├── Dockerfile          # Multi-stage container build
 └── docs/               # Documentation
     └── tech_spec/      # Technical specifications
 ```
 
 ## Development Commands
-- **Go**: `go mod init github.com/user/mille` (adjust repo path)
-- **Python**: `python -m venv venv && source venv/bin/activate`
-- **Web**: `cd web && npm init -y && npm install svelte`
-- **Build**: `make build` (once Makefile is created)
-- **Test**: `make test`
+
+### Local Development
+- **Go CLI**: `cd cmd/mille && go build -o mille`
+- **Python Library**: `cd python && pip install -e .`
+- **Web UI**: `cd web && npm install && npm run dev`
+
+### Container Development
+- **Build Container**: `docker build -t mille .`
+- **Parse Command**: `docker run mille parse --input plan.json --output parsed.json`
+- **Diagram Command**: `docker run mille diagram --input parsed.json --output diagram.svg`
+
+### Testing
+- **Go Tests**: `cd cmd/mille && go test ./...`
+- **Python Tests**: `cd python && python -m pytest`
+- **Integration**: `cd tests/integration && ./run_tests.sh`
+
+## CLI Interface Design
+
+### Main CLI (Go)
+```bash
+mille --input plan.json --output parsed.json
+mille --input plan.json --format yaml --output plan.yaml
+mille --input plan.json --output diagram.svg --format svg
+mille --input plan.json --output diagram.png --format png --theme aws
+```
+
+### Container Interface (Unified)
+```bash
+docker run mille parse --input plan.json --output parsed.json
+docker run mille diagram --input parsed.json --output diagram.svg
+```
 
 ## Key Features
-1. Parse Terraform/OpenTofu plan JSON files
-2. Generate infrastructure diagrams using Python diagrams library
-3. Provide web UI for interactive visualization
-4. Support multiple cloud providers (AWS, Azure, GCP)
-5. Enable customizable layouts and theming
+1. **Microservices Architecture**: Unified Go CLI with internal Python services
+2. **Container-Native**: Docker-first design for local and production use
+3. **Service Scalability**: Visualization services can scale independently
+4. **Multi-Cloud Support**: AWS, Azure, GCP provider support
+5. **Interactive Web UI**: Svelte-based visualization interface
+6. **Flexible Output**: SVG, PNG, interactive HTML formats
 
 ## Important Notes
-- The project is in initial setup phase
-- Follow Go module conventions
-- Use Python virtual environment for isolation
-- Svelte app should be SPA with TypeScript support
-- All visualization logic should be in Python, not Go
+- **Unified CLI**: Single `mille` binary with internal service orchestration
+- **Docker-First**: Local development uses containers for consistency
+- **Data Exchange**: Standardized JSON format between Go CLI and Python services
+- **Independent Scaling**: Python visualization services can scale horizontally
+- **Container Orchestration**: Ready for Kubernetes deployment
